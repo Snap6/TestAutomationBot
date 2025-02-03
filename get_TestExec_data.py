@@ -2,6 +2,7 @@ import os
 import json 
 import ollama 
 import streamlit as st
+from Suggester import get_ollama_suggestions
 
 def get_templates(id = 0):
     template_0 = "http://cb-logs-qe.s3-website-us-west-2.amazonaws.com/8.0.0-2476/jenkins_logs/test_suite_executor-TAF/<replacement>/consoleText.txt"
@@ -21,29 +22,6 @@ def insert_id_in_url(job_id, id):
     if(template == "Invalid id"): return "template not found"
     return template.replace("<replacement>", str(job_id))
 
-def get_ollama_suggestions(job_id):
-    print("loading the data")
-    # read the data from the json files
-    try:
-        with open("data/data{}/data{}_0.txt".format(job_id, job_id)) as f:
-            data = f.read()
-    except:
-        print("data not found")
-        return
-    # get the suggestions from the data
-    print(data)
-    # check if the data is there or it contains 404 error 
-    if "404 Not Found" in data:
-        return "Data not found"
-    print("evaluating the data")
-    response = ollama.chat(model='deepseek-r1:32b', messages=[
-        {
-        'role': 'user',
-        'content': f'for the content below , think about the reasons why the test failed\n{data}, suggest me some fixes for this as well.'
-        },
-    ],  options={"temperature": 0} )
-        
-    return response["message"]["content"]
 
 def get_data_from_url(job_id):
     # make a directory to save the data
@@ -55,7 +33,7 @@ def get_data_from_url(job_id):
             return 
         # a curl request to get the data from the url
         data_format_to_save = url.split('.')[-1]
-        os.system("curl -o data{0}/data{0}_{1}.{2} ".format(job_id,i,data_format_to_save) + url)
+        os.system("curl -o data/data{0}/data{0}_{1}.{2} ".format(job_id,i,data_format_to_save) + url)
     print(get_ollama_suggestions(job_id))
 
 
