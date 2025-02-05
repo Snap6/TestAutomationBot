@@ -20,6 +20,9 @@ def get_ollama_suggestions(job_id):
         'role': 'user',
         'content': f'for the content below , think about the reasons why the test failed\n{data}, suggest me some fixes for this as well.'
         },
-    ],  options={"temperature": 0} )
+    ],  options={"temperature": 0}, stream=True )
+    
+    for chunk in response:
+        print(chunk["message"]["content"], end='', flush=True)
         
-    return response["message"]["content"]
+    return "Streaming complete"
