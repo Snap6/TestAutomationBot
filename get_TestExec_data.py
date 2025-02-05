@@ -25,7 +25,7 @@ def insert_id_in_url(job_id, id):
 
 def get_data_from_url(job_id):
     # make a directory to save the data
-    os.system("mkdir -p data{}".format(job_id))
+    os.system("mkdir -p data/data{}".format(job_id))
     for i in range(0,3):
         url = insert_id_in_url(job_id, i)
         if(url == "template not found"):
